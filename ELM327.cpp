@@ -37,7 +37,7 @@ byte Elm327::engineLoad(byte &load){
 	return ELM_SUCCESS;
 }
 
-byte Elm327::coolantTemperature(int &temp){
+byte Elm327::coolantTemperature(float &temp){
 	byte status;
 	byte values[1];
 	status=getBytes("01","41","05",values,1);
@@ -129,7 +129,7 @@ byte Elm327::timingAdvance(int &advance){
 	return ELM_SUCCESS;
 }
 
-byte Elm327::intakeAirTemperature(int &temperature){
+byte Elm327::intakeAirTemperature(float &temperature){
 	byte status;
 	byte values[1];
 	status=getBytes("01","41","0F",values,1);
