@@ -23,8 +23,22 @@ byte Elm327::begin(){
 	ELM_PORT.begin(ELM_BAUD_RATE);
 	char data[20];
 	runCommand("AT E0",data,20);
-	return runCommand("AT SP 0",data,20);
+	runCommand("AT SP 0",data,20);
+	return runCommand("AT SH 7E0",data,20); //(FRS/gt86/brz specific CAN header)
 }
+
+/*//FRS/gt86/brz specific oil temperature
+byte ELM327::brzOilTemp(float &oilTemp){
+	byte status;
+	byte values[1];
+	status=getBytes("21","01",values,1);
+		if (status != ELM_SUCCESS){
+		return status;
+	}
+	oilTemp=values[0]*100/255;
+	return ELM_SUCCESS;
+}
+*/
 
 byte Elm327::engineLoad(byte &load){
 	byte status;
@@ -632,7 +646,10 @@ byte Elm327::runCommand(const char *cmd, char *data, unsigned int dataLength)
     {
         if ( ELM_PORT.available() ){
 			data[counter]=ELM_PORT.read();
-			if (  data[counter] == '>' ){
+			if ( data[counter] == '\r'){
+				found=false;
+			}
+			else if (  data[counter] == '>' ){
 				found=true;
 				data[counter]='\0';
 			}else{
