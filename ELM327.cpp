@@ -22,6 +22,7 @@
 byte Elm327::begin(){
 	ELM_PORT.begin(ELM_BAUD_RATE);
 	char data[20];
+	runCommand("ATZ",data,20);
 	runCommand("AT E0",data,20);
 	runCommand("AT SP 0",data,20);
 	return runCommand("AT SH 7E0",data,20); //(FRS/gt86/brz specific CAN header)
