@@ -22,6 +22,8 @@
 byte Elm327::begin(){
 	ELM_PORT.begin(ELM_BAUD_RATE);
 	char data[20];
+	//powersave sleep mode setup first
+	runCommand("STSLU", data, 20); //sleep on UART inactivity and wake on activity
 	runCommand("ATZ",data,20);
 	runCommand("AT E0",data,20);
 	runCommand("AT SP 0",data,20);
