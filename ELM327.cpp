@@ -386,6 +386,55 @@ byte Elm327::evapPressure(int &pressure){
 	return ELM_SUCCESS;
 }
 
+byte Elm327::fuelInjectionTiming(float &position)
+{
+	byte status;
+	byte values[2];
+	status = getBytes("01", "41", "5D", values, 2);
+	if (status != ELM_SUCCESS){
+		return status;
+	}
+	position = ((float)((values[0] * 256) + values[1]) - 26.880) / 128;
+	return ELM_SUCCESS;
+}
+
+byte Elm327::engineFuelRate(float &rate)
+{
+	byte status;
+	byte values[2];
+	status = getBytes("01", "41", "5E", values, 2);
+	if (status != ELM_SUCCESS){
+		return status;
+	}
+	rate = ((float)(values[0] * 256) + values[1])*0.05;
+	return ELM_SUCCESS;
+}
+
+byte Elm327::driverDemandEngineTorque(byte &torque)
+{
+	byte status;
+	byte values[1];
+	status = getBytes("01", "41", "61", values, 1);
+	if (status != ELM_SUCCESS){
+		return status;
+	}
+	torque = values[0] - 125;
+	return ELM_SUCCESS;
+}
+
+byte Elm327::actualEngineTorque(byte &torque)
+{
+	byte status;
+	byte values[1];
+	status = getBytes("01", "41", "62", values, 1);
+	if (status != ELM_SUCCESS){
+		return status;
+	}
+	torque = values[0] - 125;
+	return ELM_SUCCESS;
+}
+
+
 byte Elm327::barometricPressure(byte  &pressure){
 	byte status;
 	byte values[1];
@@ -590,7 +639,7 @@ byte Elm327::getBytes( const char *mode, const char *chkMode, const char *pid, b
 	char data[64];
 	byte status;
 	char hexVal[]="0x00";
-	char cmd[5];
+	char cmd[6];
 	cmd[0]=mode[0];
 	cmd[1]=mode[1];
 	cmd[2]=' ';
@@ -755,3 +804,4 @@ bool Elm327::getBit(byte b, byte p)
 	}
 	return false;
 }
+
